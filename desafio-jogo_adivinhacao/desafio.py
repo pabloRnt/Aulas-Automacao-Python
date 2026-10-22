@@ -1,3 +1,5 @@
+import re
+
 banco_palavras = {
     "jogos": [
         "Minecraft",
@@ -14,7 +16,7 @@ banco_palavras = {
         "Resident Evil",
     ],
     "filmes": [
-        "O Poderoso Chefão",
+        "O Poderoso Chefao",
         "Titanic",
         "Avatar",
         "Interestelar",
@@ -29,27 +31,27 @@ banco_palavras = {
     ],
     "paises": [
         "Brasil",
-        "Japão",
-        "Canadá",
+        "Japao",
+        "Canada",
         "França",
-        "Austrália",
-        "Itália",
+        "Australia",
+        "Italia",
         "Egito",
         "Argentina",
         "Alemanha",
-        "Índia",
-        "México",
+        "India",
+        "Mexico",
         "Espanha",
     ],
     "adjetivos": [
         "feliz",
-        "rápido",
+        "rapido",
         "inteligente",
         "corajoso",
         "forte",
         "bonito",
         "calmo",
-        "engraçado",
+        "engracado",
         "generoso",
         "misterioso",
         "criativo",
@@ -63,7 +65,7 @@ banco_palavras = {
         "caneta",
         "livro",
         "espelho",
-        "relógio",
+        "relogio",
         "mochila",
         "janela",
         "chave",
@@ -91,12 +93,37 @@ print("3 - Países")
 print("4 - Adjetivos")
 print("5 - Objetos")
 
-categoria_index = int(input("Digite a opção: ")) - 1
-categoria = index_categorias[categoria_index]
+while True:
 
-print(f"A categoria possui {len(banco_palavras[categoria])} palavras\n")
+    try: 
+        categoria_index = int(input("Digite a opção: ")) - 1
 
-posicao_palavra = int(input("Escolha a posição da palavra: "))
+        if categoria_index < 0 or categoria_index > len(index_categorias.keys()) - 1:
+            continue
+
+        categoria = index_categorias[categoria_index]
+        break
+
+    except:
+        continue
+
+print(f"A categoria \"{categoria}\" possui {len(banco_palavras[categoria])} palavras\n")
+
+while True:
+
+    try:
+
+        posicao_palavra = int(input("Escolha a posição da palavra: "))
+
+        if posicao_palavra < 1 or posicao_palavra > len(banco_palavras[categoria]):
+            raise ValueError
+
+        break
+
+    except:
+        print(f"Escolha uma posição entre 1 e {len(banco_palavras[categoria])}")
+        continue
+
 print()
 
 palavra = banco_palavras[categoria][posicao_palavra]
@@ -112,10 +139,21 @@ print(f"Tentativas restantes: {tries}")
 
 while True:
 
-    letra = input("Digite uma letra: ")
+    letra = (input("Digite uma letra: ")).lower()
+
+    if letra.lower() == "sair":
+
+        print("Saindo...")
+        break
+
+    if not re.match(r"^[a-z]$", letra):
+
+        continue
+
+    letra_repetida = 0
 
     posicoes = []
-    posicao = palavra.find(letra)
+    posicao = palavra.lower().find(letra)
 
     while posicao != -1:
 
@@ -130,27 +168,34 @@ while True:
             print(f"Suas {total_tries} terminaram! \nA palavra era {palavra}")
             break
 
-        print(f"Você errou! Tentativas restantes: {tries}")
+        print(f"Você errou!")
 
-    acertos_letras.append(letra)
+    else: 
 
-    if letra not in acertos_letras:
-        acertos += 1
+        if letra not in acertos_letras and not letra_repetida:
 
-    if acertos == tamanho_palavra:
-        print(f"Parabéns! Você descobriu a palavra: {palavra}")
-        break
+            acertos += 1
+            letra_repetida = not letra_repetida
+            acertos_letras.append(letra)
 
-    inserir = letra
+            #print(acertos)
 
-    # Fatiamento e concatenação
-    for posicao in posicoes:
-        novo_texto = texto[:posicao] + inserir + texto[posicao+1:]
+        if acertos == tamanho_palavra:
+            print(f"Parabéns! Você descobriu a palavra: {palavra}")
+            break
 
-    texto = novo_texto
+        inserir = letra
+
+        # Fatiamento e concatenação
+        for posicao in posicoes:
+
+            novo_texto = texto[:posicao] + inserir + texto[posicao+1:]
+
+            texto = novo_texto
+
+        print(f"Tentativas restantes: {tries}")
+        print(novo_texto)
 
     print(f"Tentativas restantes: {tries}")
-    print(novo_texto)
 
-# Ver por que dá erro se errar primeira letra
-# Para de imprimir mensagem de tentativas restantes repetidas quando errar
+#Adicionar espaços nos sublinhados para palavras compostas (Resident Evil)
